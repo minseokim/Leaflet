@@ -43,17 +43,36 @@ table {
 	border-spacing: 0;
 }
 
+/* Body typeface and color */
+
 body {
-	font-family : "Libre Franklin";
+	font-family : "Libre Franklin", sans-serif;
+	background-color : #f8f8f8;
+	box-sizing : border-box;
+}
+
+/* Remove default styling for links */
+a, a:active, a:visited {
+	color : #b9b9b9;
+	text-decoration : none;
 }
 
 /* Navigation */
 .topnav {
-	color: #ffffff;
+	position : fixed;
+	background-color: #ffffff;
 	width : 100%;
-	height : 200px;
+	height : 50px;
 }
 
 .topnav__list {
+	padding : 20px;
 	display : flex;
+	justify-content: space-between;
+}
+
+.topnav__sublist {
+	width : 40%;
+	display : flex;
+	justify-content : space-between;
 }
