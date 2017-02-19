@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="styles/main.css">
 
     <!--Fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin" rel="stylesheet">
+    <link href="//db.onlinewebfonts.com/c/e964e105b78e8de781e629486cf8b31f?family=CamphorW01-Light" rel="stylesheet" type="text/css"/>
 
     <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
     <!--
@@ -46,7 +46,7 @@
     <nav class="topnav">
       <ul class="topnav__list">
         <li class="topnav__item">
-          <a class="topnav__link topnav__logo" href="#">Leaflet</a>
+          <a class="topnav__link topnav--logo" href="#">Leaflet</a>
         </li>
         <ul class="topnav__sublist">
           <li class="topnav__item">
@@ -60,14 +60,30 @@
           </li>
         </ul>
         <li class="topnav__item">
-          <a class="topnav__link topnav__writeBtn" href="#">Write</a>
+          <a class="topnav__link topnav--writeBtn" href="#">Write</a>
         </li>
       </ul>
     </nav>
 
-    <header>
+    <!--Wrapper for body & sidebar-->
+    <div class="reviews-sidebar-wrapper">
+      <!--Main Body Section-->
+      <section class="reviews">
+        <article class="review__card">
 
-    </header>
+        </article>
+      </section>
+      <!--Sidebar -->
+      <aside class="sidebar">
+        <section class="sidebar__tags">
+          <h2 class="sidebar__heading__tags">Sort by Genre</h2>
+        </section>
+        <section class="sidebar__recently-reviewed">
+          <h2 class="sidebar__heading__recently-reviewed">Recently Reviewed on Leaflet</h2>
+        </section>
+      </aside>
+    </div>
+
     <!-- build:js scripts/main.min.js -->
     <script src="scripts/main.min.js"></script>
     <!-- endbuild -->

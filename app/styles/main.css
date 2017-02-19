@@ -46,7 +46,7 @@ table {
 /* Body typeface and color */
 
 body {
-	font-family : "Libre Franklin", sans-serif;
+	font-family : "CamphorW01-Light", sans-serif;
 	background-color : #f8f8f8;
 	box-sizing : border-box;
 }
@@ -76,3 +76,6 @@ a, a:active, a:visited {
 	display : flex;
 	justify-content : space-between;
 }
+
+
+/* Sidebar */
