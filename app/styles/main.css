@@ -26,6 +26,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
+	box-sizing : border-box;
 }
 ol, ul {
 	list-style: none;
@@ -43,12 +44,16 @@ table {
 	border-spacing: 0;
 }
 
-/* Body typeface and color */
 
+html {
+	height : 100%;
+}
+
+/* Body typeface and color */
 body {
-	font-family : "CamphorW01-Light", sans-serif;
+	font-family : "CamphorW04-Medium", sans-serif;
 	background-color : #f8f8f8;
-	box-sizing : border-box;
+	height : 100%;
 }
 
 /* Remove default styling for links */
@@ -60,6 +65,8 @@ a, a:active, a:visited {
 /* Navigation */
 .topnav {
 	position : fixed;
+	top: 0;
+	left : 0;
 	background-color: #ffffff;
 	width : 100%;
 	height : 50px;
@@ -77,5 +84,24 @@ a, a:active, a:visited {
 	justify-content : space-between;
 }
 
+/*Container div for sidebar and wrapper*/
+.reviews-sidebar-wrapper {
+	margin-top : 50px;
+	display : flex;
+	height : 100%;
+}
+
+
+/*Reviews section*/
+.reviews {
+}
 
 /* Sidebar */
+.sidebar {
+	width : 25%;
+	height : 100%;
+	background-color : #ffffff;
+	display : flex;
+	flex-direction : column;
+	justify-content: space-between;
+}
