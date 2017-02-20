@@ -92,7 +92,7 @@ a, a:active, a:visited {
 
 /* Add purple border on top for active menu */
 .topnav__sublist__link:hover {
-	border-top : 3px solid #4A235A;
+	border-top : 3px solid #6C3483;
 	color : #6d6d6d;
 }
 
@@ -113,6 +113,7 @@ a, a:active, a:visited {
 .review__card:first-child {
 	margin-top: 6em;
 }
+
 .review__card {
 	background-color : #ffffff;
 	margin: 0em 5em 5em 5em;
@@ -147,6 +148,7 @@ a, a:active, a:visited {
 /*Review Tags*/
 .review__card__taglist {
 	display : flex;
+	flex-wrap: wrap;
 	list-style: none;
 	justify-content: flex-start;
 	align-items: center;
@@ -164,7 +166,7 @@ a, a:active, a:visited {
 }
 
 .review__card__tagItem {
-	margin-right : 1em;
+	margin : .5em .5em .5em .5em;
 }
 
 
@@ -221,8 +223,29 @@ a, a:active, a:visited {
 .sidebar__heading__tags, .sidebar__heading__recentlyReviewed {
 	font-family : "CamphorW01-Medium";
 	font-size : 1rem;
+	text-align: center;
+	margin-bottom : 1.3em;
+}
+
+/* Line for */
+.sidebar__horizontalLine {
+	height : 1px;
+	width : 20%;
+	border-bottom : 3px solid #6C3483;
+	text-align : center;
+	margin : 0 auto;
 }
 
 .sidebar__tagLink {
 	font-size : .8rem;
+}
+
+.sidebar__taglist {
+	padding : 1em 3em;
+	display : flex;
+	flex-wrap : wrap;
+}
+
+.sidebar__tagItem {
+	margin : .3em .3em;
 }
