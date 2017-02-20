@@ -129,11 +129,39 @@ a, a:active, a:visited {
 /*Review Tags*/
 .review__card__taglist {
 	display : flex;
+	list-style: none;
+	justify-content: space-between;
+	align-items: center;
+	height : 100%;
 }
+
+.review__card__tagItem, .review__card__tagLink {
+	height : 25px;
+	line-height : 25px;
+}
+
+.review__card__tagLink {
+	padding : .3em .6em .3em 1.5em;
+	background-color : #f8f8f8;
+	color : #919191;
+	position:relative;
+}
+
+.review__card__tagLink:before {
+	content : "";
+	position : absolute;
+	top : 9px;
+	left : 10px;
+	width: 4px;
+	height : 4px;
+	background-color : #919191;
+	border-radius : 2px;
+	/*top : 2px;*/
+}
+
 
 .review__card__footer {
 	font-size : 0.8rem;
-	color : #919191;
 	border-top: 1px solid #ededed;
 	flex : 1;
 }
@@ -149,8 +177,9 @@ a, a:active, a:visited {
 }
 
 .review__card__bookCoverImage {
-	width : 70%;
+	width : 62%;
 }
+
 /* Sidebar */
 .sidebar {
 	width : 27%;
@@ -163,4 +192,5 @@ a, a:active, a:visited {
 
 .sidebar__heading__tags, .sidebar__heading__recentlyReviewed {
 	font-family : "CamphorW01-Medium";
+	font-size : 1rem;
 }
