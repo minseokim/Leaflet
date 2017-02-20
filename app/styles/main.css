@@ -87,13 +87,31 @@ a, a:active, a:visited {
 
 /*Reviews section*/
 .reviews {
-	/*width : 75%;*/
-	
+	width : 80%;
+}
+
+/* Review Card */
+.review__card {
+	background-color : #ffffff;
+	border-radius : 5px;
+	margin: 7em 5em 5em 5em;
+	display : flex;
+}
+
+.review__card__contentBox {
+	width : 75%;
+	height : 100%;
+	padding : 1.5em 1.5em 1.5em 5em;
+}
+
+.review__card__bookCover {
+	width : 25%;
+	background-color : #F36A6F;
 }
 
 /* Sidebar */
 .sidebar {
-	width : 25%;
+	width : 20%;
 	height : 100vh;
 	background-color : #ffffff;
 	display : flex;
