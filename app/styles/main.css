@@ -44,16 +44,10 @@ table {
 	border-spacing: 0;
 }
 
-
-html {
-	height : 100%;
-}
-
 /* Body typeface and color */
 body {
 	font-family : "CamphorW04-Medium", sans-serif;
 	background-color : #f8f8f8;
-	height : 100%;
 }
 
 /* Remove default styling for links */
@@ -91,17 +85,18 @@ a, a:active, a:visited {
 	height : 100%;
 }
 
-
 /*Reviews section*/
 .reviews {
+	/*width : 75%;*/
+	
 }
 
 /* Sidebar */
 .sidebar {
 	width : 25%;
-	height : 100%;
+	height : 100vh;
 	background-color : #ffffff;
 	display : flex;
 	flex-direction : column;
-	justify-content: space-between;
+	justify-content: space-around;
 }
