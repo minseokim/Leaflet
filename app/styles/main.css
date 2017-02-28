@@ -50,7 +50,7 @@ html {
 
 /* Body typeface and color */
 body {
-	font-family : "CamphorW04-Medium", sans-serif;
+	font-family : "Nunito", sans-serif;
 	background-color : #f8f8f8;
 	height : 100%;
 }
@@ -134,7 +134,7 @@ a, a:active, a:visited {
 }
 
 .review__heading {
-	font-family : "CamphorW01-Medium";
+	font-family : "Nunito";
 	font-size : 0.9rem;
 	margin-bottom : 1em;
 }
@@ -221,7 +221,7 @@ a, a:active, a:visited {
 }
 
 .sidebar__heading__tags, .sidebar__heading__recentlyReviewed {
-	font-family : "CamphorW01-Medium";
+	font-family : "Nunito";
 	font-size : 1rem;
 	text-align: center;
 	margin-bottom : 1.3em;
