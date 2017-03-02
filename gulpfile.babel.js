@@ -26,6 +26,7 @@
 
 import path from 'path';
 import gulp from 'gulp';
+// import gUtil from 'gulp-util';
 import del from 'del';
 import runSequence from 'run-sequence';
 import browserSync from 'browser-sync';
@@ -119,7 +120,7 @@ gulp.task('scripts', () =>
       .pipe($.sourcemaps.write())
       .pipe(gulp.dest('.tmp/scripts'))
       .pipe($.concat('main.min.js'))
-      .pipe($.uglify({preserveComments: 'some'}))
+      // .pipe($.uglify({preserveComments: 'some'}).on('error', gUtil.log))
       // Output files
       .pipe($.size({title: 'scripts'}))
       .pipe($.sourcemaps.write('.'))

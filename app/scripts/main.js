@@ -54,4 +54,21 @@
       console.error('Error during service worker registration:', e);
     });
   }
+
+  // Custom JS Goes Here
+  let posts;
+
+  const getPostData = function() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        posts = JSON.parse(this.responseText);
+        console.log(posts);
+      }
+    };
+    xhttp.open('GET', 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2Fposts%22&format=json&diagnostics=true&callback=', true);
+    xhttp.send();
+  };
+
+  getPostData();
 })();

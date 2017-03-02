@@ -109,7 +109,6 @@ a, a:active, a:visited {
 }
 
 /* Review Card */
-
 .review__card:first-child {
 	margin-top: 6em;
 }
@@ -247,5 +246,5 @@ a, a:active, a:visited {
 }
 
 .sidebar__tagItem {
-	margin : .3em .3em;
+	margin : .3em .1em;
 }
