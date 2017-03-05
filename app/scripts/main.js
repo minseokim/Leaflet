@@ -56,19 +56,45 @@
   }
 
   // Custom JS Goes Here
-  let posts;
 
   const getPostData = function() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-      if (this.readyState === 4 && this.status === 200) {
-        posts = JSON.parse(this.responseText);
-        console.log(posts);
-      }
-    };
-    xhttp.open('GET', 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2Fposts%22&format=json&diagnostics=true&callback=', true);
-    xhttp.send();
-  };
+    const requestUrl = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2Fposts%22&format=json&diagnostics=true&callback=';
 
-  getPostData();
+    return new Promise(function(resolve, reject) {
+      const request = new XMLHttpRequest();
+      request.open('GET', requestUrl);
+
+      request.onload = function() {
+        // if status is 200
+        if (request.status === 200) {
+          // resolve promise with response
+          resolve(request.responseText);
+        } else {
+          // otherwise reject with status text
+          reject(Error(request.statusText));
+        }
+      };
+      // Handling network errors
+      request.onerror = function() {
+        reject(Error('Network Error!'));
+      };
+
+      request.send();
+    });
+    // var xhttp = new XMLHttpRequest();
+    // xhttp.onreadystatechange = function() {
+    //   if (this.readyState === 4 && this.status === 200) {
+    //     rawPostData = JSON.parse(this.responseText);
+    //     let postArray = rawPostData.query.results.json.json;
+    //     console.log(postArray);
+    //   }
+    // };
+    // xhttp.open('GET', , true);
+    // xhttp.send();
+  };
+  getPostData().then(function(response) {
+    console.log(JSON.parse(response));
+  }, function(error) {
+    console.error('Failed!', error);
+  });
 })();
