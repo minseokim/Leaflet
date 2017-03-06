@@ -84,16 +84,27 @@
 
   const processFormatData = function(rawData) {
     const processedData = rawData.map(function(post) {
+      let preview = post.content.rendered.split('\n');
+      console.log(preview);
       return {
         date: post.date,
         title: post.title.rendered,
-        content: post.content.rendered,
+        previewText: preview[0] + preview[1] + preview[2],
+        fullContent: post.content.rendered,
         image: post.better_featured_image.source_url,
         tags: post.tags
       };
     });
 
-    console.log(processedData);
+    return processedData;
+  };
+
+  const render = function(reviews) {
+    console.log(reviews);
+    const templateScript = document.getElementById('review-cards').innerHTML;
+    const template = Handlebars.compile(templateScript);
+    console.log(template(reviews));
+    document.getElementById('reviews').innerHTML = template(reviews);
   };
 
   fetchPostData().then(function(response) {
@@ -105,5 +116,5 @@
     return filteredData;
   }, function(error) {
     console.error('Failed!', error);
-  }).then(processFormatData);
+  }).then(processFormatData).then(render);
 })();

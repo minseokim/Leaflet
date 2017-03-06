@@ -68,16 +68,15 @@
     <!--Wrapper for body & sidebar-->
     <div class="reviews-sidebar-wrapper">
       <!--Main Body Section to hold reviews-->
-      <section class="reviews">
-
+      <section class="reviews" id="reviews">
         <!--Handlebars script to generate review cards-->
-        <script id="review-card" type="text/x-handlebars-template">
-          {{#each reviews}}
+        <script id="review-cards" type="text/x-handlebars-template">
+          {{#each this}}
           <article class="review__card">
             <div class="review__card__contentBox">
               <div class="review__card__text">
-                  <h3 class="review__heading">{{this.reviewTitle}}</h3>
-                <p class="review__paragraph">{{this.reviewText}}</p>
+                  <h3 class="review__heading">{{this.title}}</h3>
+                <p class="review__paragraph">{{{this.previewText}}}</p>
               </div>
               <div class="review__card__footer">
                 <ul class="review__card__taglist">
@@ -89,7 +88,7 @@
               </div>
             </div>
             <div class="review__card__bookCover">
-              <img src={{this.coverImage}} class="review__card__bookCoverImage" alt="book-cover">
+              <img src={{this.image}} class="review__card__bookCoverImage" alt="book-cover">
             </div>
           </article>
           {{/each}}
