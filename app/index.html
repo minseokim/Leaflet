@@ -67,29 +67,33 @@
 
     <!--Wrapper for body & sidebar-->
     <div class="reviews-sidebar-wrapper">
-      <!--Main Body Section-->
+      <!--Main Body Section to hold reviews-->
       <section class="reviews">
 
-        <article class="review__card">
-          <div class="review__card__contentBox">
-            <div class="review__card__text">
-              <h3 class="review__heading">Anything You Want by Derek Sivers</h3>
-              <p class="review__paragraph">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident...</p>
+        <!--Handlebars script to generate review cards-->
+        <script id="review-card" type="text/x-handlebars-template">
+          {{#each reviews}}
+          <article class="review__card">
+            <div class="review__card__contentBox">
+              <div class="review__card__text">
+                  <h3 class="review__heading">{{this.reviewTitle}}</h3>
+                <p class="review__paragraph">{{this.reviewText}}</p>
+              </div>
+              <div class="review__card__footer">
+                <ul class="review__card__taglist">
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Business</a></li>
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Computers</a></li>
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Startups</a></li>
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Programming</a></li>
+                </ul>
+              </div>
             </div>
-            <div class="review__card__footer">
-              <ul class="review__card__taglist">
-                <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Business</a></li>
-                <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Computers</a></li>
-                <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Startups</a></li>
-                <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Programming</a></li>
-              </ul>
+            <div class="review__card__bookCover">
+              <img src={{this.coverImage}} class="review__card__bookCoverImage" alt="book-cover">
             </div>
-          </div>
-          <div class="review__card__bookCover">
-            <img src="http://minseoalexkim.com/wp-content/uploads/2017/01/DerekSivers-AnythingYouWant-318x450-e1485831550319.jpg" class="review__card__bookCoverImage" alt="book-cover">
-          </div>
-        </article>
-
+          </article>
+          {{/each}}
+        </script>
       </section>
       <!--Sidebar -->
       <aside class="sidebar">
@@ -110,6 +114,9 @@
       </aside>
     </div>
 
+    <!--Handlebars-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js">
+    </script>
     <!-- build:js scripts/main.min.js -->
     <script src="scripts/main.min.js"></script>
     <!-- endbuild -->

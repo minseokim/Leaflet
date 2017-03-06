@@ -1,4 +1,3 @@
-
 /* eslint-env browser */
 (function() {
   'use strict';
@@ -83,14 +82,28 @@
     });
   };
 
+  const processFormatData = function(rawData) {
+    const processedData = rawData.map(function(post) {
+      return {
+        date: post.date,
+        title: post.title.rendered,
+        content: post.content.rendered,
+        image: post.better_featured_image.source_url,
+        tags: post.tags
+      };
+    });
+
+    console.log(processedData);
+  };
+
   fetchPostData().then(function(response) {
     // Parse JSON data and then filter for book reviews using categories( Category "36")
     let postData = JSON.parse(response).query.results.json.json;
-    let bookReviewData = postData.filter(function(post) {
+    let filteredData = postData.filter(function(post) {
       return post.categories === '36';
     });
-    console.log(bookReviewData);
+    return filteredData;
   }, function(error) {
     console.error('Failed!', error);
-  });
+  }).then(processFormatData);
 })();
