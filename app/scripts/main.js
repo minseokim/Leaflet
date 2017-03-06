@@ -57,7 +57,7 @@
 
   // Custom JS Goes Here
 
-  const getPostData = function() {
+  const fetchPostData = function() {
     const requestUrl = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2Fposts%22&format=json&diagnostics=true&callback=';
 
     return new Promise(function(resolve, reject) {
@@ -81,19 +81,15 @@
 
       request.send();
     });
-    // var xhttp = new XMLHttpRequest();
-    // xhttp.onreadystatechange = function() {
-    //   if (this.readyState === 4 && this.status === 200) {
-    //     rawPostData = JSON.parse(this.responseText);
-    //     let postArray = rawPostData.query.results.json.json;
-    //     console.log(postArray);
-    //   }
-    // };
-    // xhttp.open('GET', , true);
-    // xhttp.send();
   };
-  getPostData().then(function(response) {
-    console.log(JSON.parse(response));
+
+  fetchPostData().then(function(response) {
+    // Parse JSON data and then filter for book reviews using categories( Category "36")
+    let postData = JSON.parse(response).query.results.json.json;
+    let bookReviewData = postData.filter(function(post) {
+      return post.categories === '36';
+    });
+    console.log(bookReviewData);
   }, function(error) {
     console.error('Failed!', error);
   });
