@@ -71,7 +71,7 @@
       <section class="reviews" id="reviews">
         <!--Handlebars script to generate review cards-->
         <script id="review-cards" type="text/x-handlebars-template">
-          {{#each this}}
+          {{#each postData}}
           <article class="review__card">
             <div class="review__card__contentBox">
               <div class="review__card__text">
@@ -80,9 +80,11 @@
               </div>
               <div class="review__card__footer">
                 <ul class="review__card__taglist">
-                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Business</a></li>
-                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Start-ups</a></li>
-                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Programming</a></li>
+                  {{#each this.tags}}
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">{{this}}</a></li>
+                  <!-- <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Start-ups</a></li>
+                  <li class="review__card__tagItem"><a href="#" class="review__card__tagLink">Programming</a></li> -->
+                  {{/each}}
                 </ul>
               </div>
             </div>

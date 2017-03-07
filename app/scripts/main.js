@@ -152,7 +152,8 @@
   };
 
   const render = function(data) {
-    const reviewData = data.postData;
+    const reviewData = data;
+    console.log(reviewData);
     const templateScript = document.getElementById('review-cards').innerHTML;
     const template = Handlebars.compile(templateScript);
     document.getElementById('reviews').innerHTML = template(reviewData);
