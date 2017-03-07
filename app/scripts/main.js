@@ -104,7 +104,7 @@
       return post.categories[0] === 36;
     });
     // Map only the relevant properties
-    const processedPostData = filteredData.map(function(post) {
+    const processedPostData = filteredData.map(function(post, index) {
       let contentSplitted = post.content.rendered.split('\n');
       let preview = contentSplitted[0] + contentSplitted[1];
       return {
@@ -113,7 +113,8 @@
         previewText: preview,
         fullContent: post.content.rendered,
         image: post.better_featured_image.source_url,
-        tags: post.tags
+        tags: post.tags,
+        index : index
       };
     });
 
@@ -151,7 +152,7 @@
   };
 
   const render = function(data) {
-    const reviewData = data.postData; // TO-DO : COMMENT NEXT LINE OUT
+    const reviewData = data.postData;
     const templateScript = document.getElementById('review-cards').innerHTML;
     const template = Handlebars.compile(templateScript);
     document.getElementById('reviews').innerHTML = template(reviewData);
