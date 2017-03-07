@@ -55,9 +55,8 @@
   }
 
   // Custom JS Goes Here
-
   const fetchPostData = function() {
-    const requestUrl = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2Fposts%22&format=json&diagnostics=true&callback=';
+    const requestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
 
     return new Promise(function(resolve, reject) {
       const request = new XMLHttpRequest();
@@ -84,12 +83,12 @@
 
   const processFormatData = function(rawData) {
     const processedData = rawData.map(function(post) {
-      let preview = post.content.rendered.split('\n');
-      console.log(preview);
+      let contentSplitted = post.content.rendered.split('\n');
+      let preview = contentSplitted[0] + contentSplitted[1];
       return {
         date: post.date,
         title: post.title.rendered,
-        previewText: preview[0] + preview[1] + preview[2],
+        previewText: preview,
         fullContent: post.content.rendered,
         image: post.better_featured_image.source_url,
         tags: post.tags
@@ -100,21 +99,31 @@
   };
 
   const render = function(reviews) {
-    console.log(reviews);
     const templateScript = document.getElementById('review-cards').innerHTML;
     const template = Handlebars.compile(templateScript);
-    console.log(template(reviews));
     document.getElementById('reviews').innerHTML = template(reviews);
   };
 
+  const changeBookCoverBackgroundColor = function() {
+    const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
+    const bookCoverElems =
+    document.getElementsByClassName('review__card__bookCover');
+    for (let i = 0; i < bookCoverElems.length; i++) {
+      let colorIndex = i % 4;
+      bookCoverElems[i].style.backgroundColor = colors[colorIndex];
+    }
+  };
+
+  /* fetch post data, then filter/process it, and render it */
   fetchPostData().then(function(response) {
     // Parse JSON data and then filter for book reviews using categories( Category "36")
-    let postData = JSON.parse(response).query.results.json.json;
+    let postData = JSON.parse(response);
+    console.log(postData);
     let filteredData = postData.filter(function(post) {
-      return post.categories === '36';
+      return post.categories[0] === 36;
     });
     return filteredData;
   }, function(error) {
     console.error('Failed!', error);
-  }).then(processFormatData).then(render);
+  }).then(processFormatData).then(render).then(changeBookCoverBackgroundColor);
 })();

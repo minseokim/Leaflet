@@ -199,12 +199,27 @@ a, a:active, a:visited {
 
 .review__card__bookCover {
 	width : 25%;
-	background-color : #F36A6F;
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 	display : flex;
 	justify-content: center;
 	align-items : center;
+}
+
+.review__card__bookCover:first-of-type {
+	background-color : 	#F36A6F;
+}
+
+.review__card__bookCover:last-of-type {
+	background-color : #65A3F6;
+}
+
+.review__card__bookCover:nth-of-type(3) {
+	background-color : #9FF6B7;
+}
+
+.review__card__bookCover:nth-of-type(4n+4) {
+	background-color : #FECC48;
 }
 
 .review__card__bookCoverImage {
