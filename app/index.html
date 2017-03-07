@@ -76,8 +76,9 @@
             <div class="review__card__contentBox">
               <div class="review__card__text">
                   <h3 class="review__heading" data-articleIndex="{{this.index}}">{{this.title}}</h3>
-                  <p class="review__paragraph" data-articleIndex="{{this.index}}">{{{this.previewText}}}</p>
-              </div>
+                  <div class="review__textContainer" data-articleIndex="{{this.index}}">{{{this.previewText}}}</div>
+                    <a href="" class="readMoreButton">Read More</a>
+                  </div>
               <div class="review__card__footer">
                 <ul class="review__card__taglist">
                   {{#each this.tags}}

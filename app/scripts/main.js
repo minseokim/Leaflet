@@ -106,7 +106,7 @@
     // Map only the relevant properties
     const processedPostData = filteredData.map(function(post, index) {
       let contentSplitted = post.content.rendered.split('\n');
-      let preview = contentSplitted[0] + contentSplitted[1];
+      let preview = contentSplitted[0];
       return {
         date: post.date,
         title: post.title.rendered,
@@ -152,11 +152,9 @@
   };
 
   const render = function(data) {
-    const reviewData = data;
-    console.log(reviewData);
     const templateScript = document.getElementById('review-cards').innerHTML;
     const template = Handlebars.compile(templateScript);
-    document.getElementById('reviews').innerHTML = template(reviewData);
+    document.getElementById('reviews').innerHTML = template(data);
   };
 
   /* fetch post data, then filter/process it, and render it */
