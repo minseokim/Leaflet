@@ -55,9 +55,14 @@
   }
 
   // Custom JS Goes Here
-  const fetchPostData = function() {
-    const requestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
+  const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
+  const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
+  let dataObj = {
+    postData: '',
+    tagsData: ''
+  };
 
+  const fetchData = function(requestUrl, type, dataObj) {
     return new Promise(function(resolve, reject) {
       const request = new XMLHttpRequest();
       request.open('GET', requestUrl);
@@ -66,7 +71,12 @@
         // if status is 200
         if (request.status === 200) {
           // resolve promise with response
-          resolve(request.responseText);
+          if (type === 'post') {
+            dataObj.postData = request.responseText;
+          } else {
+            dataObj.tagsData = request.responseText;
+          }
+          resolve(dataObj);
         } else {
           // otherwise reject with status text
           reject(Error(request.statusText));
@@ -76,13 +86,25 @@
       request.onerror = function() {
         reject(Error('Network Error!'));
       };
-
       request.send();
     });
   };
 
-  const processFormatData = function(rawData) {
-    const processedData = rawData.map(function(post) {
+  const processData = function(response) {
+    let cleanedDataObj = {
+      postData: '',
+      tagMap: new Map()
+    };
+
+    let tagsData = JSON.parse(response.tagsData);
+    let postData = JSON.parse(response.postData);
+    // Process post data first
+    // Parse JSON data and then filter for book reviews using categories( Category "36")
+    let filteredData = postData.filter(function(post) {
+      return post.categories[0] === 36;
+    });
+    // Map only the relevant properties
+    const processedPostData = filteredData.map(function(post) {
       let contentSplitted = post.content.rendered.split('\n');
       let preview = contentSplitted[0] + contentSplitted[1];
       return {
@@ -95,14 +117,28 @@
       };
     });
 
-    return processedData;
+    // Process tag data
+    tagsData.forEach(function(tag) {
+      cleanedDataObj.tagMap.set(tag.id, tag.name);
+    });
+
+    // Attach processed data to cleaned data object
+    cleanedDataObj.postData = processedPostData;
+    return cleanedDataObj;
   };
 
-  const render = function(reviews) {
-    const templateScript = document.getElementById('review-cards').innerHTML;
-    const template = Handlebars.compile(templateScript);
-    document.getElementById('reviews').innerHTML = template(reviews);
-  };
+  // const findTagNames = function(dataObj) {
+  //   console.log('----finding TAG NAMES-----');
+  //   dataObj.postData.forEach(function(review) {
+  //     let tagsArray = review.tags;
+  //     let tagMap = dataObj.tagMap;
+  //     for (let i = 0; i < tagsArray.length; i++) {
+  //       tagsArray[i] = tagMap.get(tagsArray[i]);
+  //     }
+  //   });
+  //   console.log(dataObj);
+  //   return dataObj;
+  // };
 
   const changeBookCoverBackgroundColor = function() {
     const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
@@ -114,16 +150,21 @@
     }
   };
 
+  const render = function(data) {
+    const reviewData = data.postData; // TO-DO : COMMENT NEXT LINE OUT
+    const templateScript = document.getElementById('review-cards').innerHTML;
+    const template = Handlebars.compile(templateScript);
+    document.getElementById('reviews').innerHTML = template(reviewData);
+  };
+
   /* fetch post data, then filter/process it, and render it */
-  fetchPostData().then(function(response) {
-    // Parse JSON data and then filter for book reviews using categories( Category "36")
-    let postData = JSON.parse(response);
-    console.log(postData);
-    let filteredData = postData.filter(function(post) {
-      return post.categories[0] === 36;
+  fetchData(postRequestUrl, 'post', dataObj)
+    .then(fetchData(tagsRequestUrl, 'tags', dataObj))
+    .then(processData)
+    // .then(findTagNames)
+    .then(render)
+    .then(changeBookCoverBackgroundColor)
+    .catch(function(reason) {
+      console.error('Caught error for this :', reason);
     });
-    return filteredData;
-  }, function(error) {
-    console.error('Failed!', error);
-  }).then(processFormatData).then(render).then(changeBookCoverBackgroundColor);
 })();
