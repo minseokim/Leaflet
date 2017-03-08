@@ -116,7 +116,7 @@ a, a:active, a:visited {
 
 .review__card {
 	background-color : #ffffff;
-	margin: 3.5em 3.5em 0em 5em;
+	margin: 3.5em 3.5em 3.5em 5em;
 	display : flex;
 	border-radius : 5px;
 	min-height : 40%;

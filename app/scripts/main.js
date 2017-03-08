@@ -19,6 +19,7 @@
       (window.location.protocol === 'https:' || isLocalhost)) {
     navigator.serviceWorker.register('service-worker.js')
     .then(function(registration) {
+      // console.log(registration);
       // updatefound is fired if service-worker.js changes.
       registration.onupdatefound = function() {
         // updatefound is also fired the very first time the SW is installed,
@@ -70,7 +71,7 @@
       request.onload = function() {
         // if status is 200
         if (request.status === 200) {
-          // resolve promise with response
+          // resolve promise with response depending on type of request
           if (type === 'post') {
             dataObj.postData = request.responseText;
           } else {
@@ -114,7 +115,7 @@
         fullContent: post.content.rendered,
         image: post.better_featured_image.source_url,
         tags: post.tags,
-        index : index
+        index: index
       };
     });
 
