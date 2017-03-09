@@ -44,26 +44,82 @@ self.addEventListener('fetch', function(e) {
   console.log('[ServiceWorker] Fetching', e.request.url);
 });
 
-/* Fetch function */
-fetch('http://minseoalexkim.com/wp-json/wp/v2/posts', {'mode': 'cors'}).then(
-    function(response) {
-      if (response.type === 'opaque') {
-        console.log('Received a response, but it\'s opaque so can\'t examine it');
-        // Do something with the response (i.e. cache it for offline support)
-        console.log(response);
-        return;
-      }
+const fetchData = function(type) {
+  const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
+  const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
 
-      if (response.status !== 200) {
-        console.log('Looks like there was a problem. Status Code: ', response.status);
-        return;
-      }
+  let requestUrl = type === 'reviews' ? postRequestUrl : tagsRequestUrl;
+  console.log('-------------', requestUrl);
+  return fetch(requestUrl, {'mode': 'cors'});
+};
 
-      // Examine the text in the response
-      response.text().then(function(responseText) {
-        console.log(responseText);
-      });
+const processRequest = function(response) {
+  return new Promise(function(resolve, reject) {
+    if (response.type === 'opaque') {
+      console.log('Received a response, but it\'s opaque so can\'t examine it');
+      // Do something with the response (i.e. cache it for offline support)
+      console.log(response);
+      return;
     }
-  ).catch(function(err) {
-    console.log('Fetch Error :-S', err);
+
+    if (response.status !== 200) {
+      console.log('Looks like there was a problem. Status Code: ', response.status);
+      return;
+    }
+
+    // Examine the text in the response
+    response.json().then(function(responseText) {
+      resolve(responseText);
+    });
   });
+};
+
+const processData = function(data) {
+
+  // Filter for book reviews using categories( Category "36")
+  let filteredData = data[0].filter(function(post) {
+    return post.categories[0] === 36;
+  });
+
+  let tagMap = new Map();
+
+  // create a map that maps tag id(number) with tag name
+  data[1].forEach(function(tag) {
+    tagMap.set(tag.id, tag.name);
+  });
+
+  // Map only the relevant properties
+  const processedData = filteredData.map(function(post, index) {
+    // Since the content of the post is in html format, we split it by newline and only take the first sentence of the post as preview text to show.
+    let contentSplitted = post.content.rendered.split('\n');
+    let preview = contentSplitted[0];
+
+    let tagNameList = [];
+
+    // Iterate over tags, getting tag name from each tag id using tagMap.
+    for (let i = 0; i < post.tags.length; i++) {
+      let tagName = tagMap.get(post.tags[i]);
+      if (Boolean(tagName)) {
+        tagNameList.push(tagName);
+      }
+    }
+
+    return {
+      date: post.date,
+      title: post.title.rendered,
+      previewText: preview,
+      fullContent: post.content.rendered,
+      image: post.better_featured_image.source_url,
+      tags: tagNameList,
+      index: index
+    };
+  });
+
+  console.log(processedData);
+  return processedData;
+};
+
+const reviewDataPromise = fetchData('reviews').then(processRequest);
+const tagsDataPromise = fetchData('tags').then(processRequest);
+
+Promise.all([reviewDataPromise, tagsDataPromise]).then(processData);
