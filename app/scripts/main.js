@@ -56,92 +56,6 @@
   }
 
   // Custom JS Goes Here
-  const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
-  const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
-  let dataObj = {
-    postData: '',
-    tagsData: ''
-  };
-
-  const fetchData = function(requestUrl, type, dataObj) {
-    return new Promise(function(resolve, reject) {
-      const request = new XMLHttpRequest();
-      request.open('GET', requestUrl);
-
-      request.onload = function() {
-        // if status is 200
-        if (request.status === 200) {
-          // resolve promise with response depending on type of request
-          if (type === 'post') {
-            dataObj.postData = request.responseText;
-          } else {
-            dataObj.tagsData = request.responseText;
-          }
-          resolve(dataObj);
-        } else {
-          // otherwise reject with status text
-          reject(Error(request.statusText));
-        }
-      };
-      // Handling network errors
-      request.onerror = function() {
-        reject(Error('Network Error!'));
-      };
-      request.send();
-    });
-  };
-
-  const processData = function(response) {
-    let cleanedDataObj = {
-      postData: '',
-      tagMap: new Map()
-    };
-
-    let tagsData = JSON.parse(response.tagsData);
-    let postData = JSON.parse(response.postData);
-    // Process post data first
-    // Parse JSON data and then filter for book reviews using categories( Category "36")
-    let filteredData = postData.filter(function(post) {
-      return post.categories[0] === 36;
-    });
-    // Map only the relevant properties
-    const processedPostData = filteredData.map(function(post, index) {
-      let contentSplitted = post.content.rendered.split('\n');
-      let preview = contentSplitted[0];
-      return {
-        date: post.date,
-        title: post.title.rendered,
-        previewText: preview,
-        fullContent: post.content.rendered,
-        image: post.better_featured_image.source_url,
-        tags: post.tags,
-        index: index
-      };
-    });
-
-    // Process tag data
-    tagsData.forEach(function(tag) {
-      cleanedDataObj.tagMap.set(tag.id, tag.name);
-    });
-
-    // Attach processed data to cleaned data object
-    cleanedDataObj.postData = processedPostData;
-    return cleanedDataObj;
-  };
-
-  // const findTagNames = function(dataObj) {
-  //   console.log('----finding TAG NAMES-----');
-  //   dataObj.postData.forEach(function(review) {
-  //     let tagsArray = review.tags;
-  //     let tagMap = dataObj.tagMap;
-  //     for (let i = 0; i < tagsArray.length; i++) {
-  //       tagsArray[i] = tagMap.get(tagsArray[i]);
-  //     }
-  //   });
-  //   console.log(dataObj);
-  //   return dataObj;
-  // };
-
   const changeBookCoverBackgroundColor = function() {
     const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
     const bookCoverElems =
@@ -153,19 +67,97 @@
   };
 
   const render = function(data) {
+    console.log('------------INSIDE RENDER FUNCTION--------');
     const templateScript = document.getElementById('review-cards').innerHTML;
     const template = Handlebars.compile(templateScript);
     document.getElementById('reviews').innerHTML = template(data);
   };
 
-  /* fetch post data, then filter/process it, and render it */
-  fetchData(postRequestUrl, 'post', dataObj)
-    .then(fetchData(tagsRequestUrl, 'tags', dataObj))
+  const fetchData = function(type) {
+    const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
+    const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
+
+    let requestUrl = type === 'reviews' ? postRequestUrl : tagsRequestUrl;
+    return fetch(requestUrl, {'mode': 'cors'});
+  };
+
+  const processRequest = function(response) {
+    // console.log('response from CACHE :-------->>>>>>>>>', response);
+    return new Promise(function(resolve, reject) {
+      if (response.type === 'opaque') {
+        console.log('Received a response, but it\'s opaque so can\'t examine it');
+        // Do something with the response (i.e. cache it for offline support)
+        console.log(response);
+        return;
+      }
+
+      if (response.status !== 200) {
+        console.log('Looks like there was a problem. Status Code: ', response.status);
+        return;
+      }
+
+      // Examine the text in the response
+      console.log("Final Response", response);
+      response.json().then(function(responseText) {
+        console.log(responseText);
+        resolve(responseText);
+      });
+    });
+  };
+
+  const processData = function(data) {
+
+    // Filter for book reviews using categories( Category "36")
+    let filteredData = data[0].filter(function(post) {
+      return post.categories[0] === 36;
+    });
+
+    let tagMap = new Map();
+
+    // create a map that maps tag id(number) with tag name
+    data[1].forEach(function(tag) {
+      tagMap.set(tag.id, tag.name);
+    });
+
+    // Map only the relevant properties
+    const processedData = filteredData.map(function(post, index) {
+      // Since the content of the post is in html format, we split it by newline and only take the first sentence of the post as preview text to show.
+      let contentSplitted = post.content.rendered.split('\n');
+      let preview = contentSplitted[0];
+
+      let tagNameList = [];
+
+      // Iterate over tags, getting tag name from each tag id using tagMap.
+      for (let i = 0; i < post.tags.length; i++) {
+        let tagName = tagMap.get(post.tags[i]);
+        if (Boolean(tagName)) {
+          tagNameList.push(tagName);
+        }
+      }
+
+      return {
+        date: post.date,
+        title: post.title.rendered,
+        previewText: preview,
+        fullContent: post.content.rendered,
+        image: post.better_featured_image.source_url,
+        tags: tagNameList,
+        index: index
+      };
+    });
+    // console.log('Clean Data after request is done! :', processedData);
+    return processedData;
+  };
+
+  // console.log(document.readyState);
+  const reviewDataPromise = fetchData('reviews').then(processRequest);
+  const tagsDataPromise = fetchData('tags').then(processRequest);
+
+  Promise.all([reviewDataPromise, tagsDataPromise])
     .then(processData)
-    // .then(findTagNames)
     .then(render)
     .then(changeBookCoverBackgroundColor)
-    .catch(function(reason) {
-      console.error('Caught error for this :', reason);
+    .catch(function(err) {
+      console.error('PROMISE CHAIN BUSTED BECAUSE OF :', err);
     });
 })();
