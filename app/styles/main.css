@@ -98,7 +98,7 @@ a, a:active, a:visited {
 
 /*Container div for sidebar and wrapper*/
 .reviews-sidebar-wrapper {
-	margin-top : 50px;
+	margin-top : 3em;
 	display : flex;
 	height : 100%;
 }
@@ -187,8 +187,8 @@ a, a:active, a:visited {
 .review__card__tagLink:before, .sidebar__tagLink:before {
 	content : "";
 	position : absolute;
-	top : 9.5px;
-	left : 10px;
+	top : .8em;
+	left : .8em;
 	width: 4px;
 	height : 4px;
 	background-color : #919191;
@@ -256,4 +256,139 @@ a, a:active, a:visited {
 
 .sidebar__tagItem {
 	margin : .3em .3em;
+}
+
+
+/* Media Queries for Responsive Views */
+
+
+@media (max-width: 800px) {
+
+	.reviews {
+		width: 100%;
+		padding : 1em 2em;
+	}
+
+	.sidebar {
+		display: none;
+	}
+
+	.review__card:first-child {
+		margin-top : 3em;
+	}
+
+	.review__card {
+		width : 100%;
+		margin: 3.5em auto;
+	}
+
+	.review__card__contentBox {
+		width: 75%;
+	}
+
+	.review__card__bookCover {
+		width : 25%;
+	}
+
+	.review__heading {
+		font-size : 1.2rem;
+	}
+
+	.review__textContainer {
+		font-size : .9rem;
+	}
+
+	.readMoreButton {
+		padding : 1.2em 0em;
+		font-size: .9rem;
+	}
+
+	.review__card__footer {
+		font-size: .9rem;
+		padding : .2em;
+	}
+
+}
+
+/* Two-column layout */
+@media (max-width : 650px) {
+
+	.sidebar {
+		display : none;
+	}
+
+	.review__card:first-child {
+		margin-top : 3em;
+	}
+
+	.review__card {
+		flex-direction : row;
+	}
+
+	.review__card__contentBox {
+		width : 60%;
+	}
+
+	.review__card__bookCover {
+		width : 40%;
+		padding : 1.5em 0em;
+	}
+
+	.review__card__bookCoverImage {
+		width : 75%;
+	}
+
+	.review__heading {
+		font-size : 1.5rem;
+	}
+
+	.review__textContainer {
+		font-size : 1rem;
+		margin-bottom : 1.6em;
+	}
+
+	.readMoreButton {
+		padding: 1em 0em;
+		font-size: 1rem;
+	}
+}
+
+/* Single Column layout 401 ~ 500px */
+@media (max-width : 500px) {
+
+	.review__card {
+		margin : 3.5em auto;
+		flex-direction : column-reverse;
+	}
+
+	.review__card__contentBox {
+		width : 100%;
+	}
+
+	.review__card__text {
+		padding: 2em 2.5em;
+	}
+
+	.review__card__bookCover {
+		width : 100%;
+		padding : 1.5em 0em;
+	}
+
+	.review__card__bookCoverImage {
+		width : 40%;
+	}
+}
+
+/* One-column layout for smallest viewport */
+@media (max-width : 400px) {
+
+	.review__card {
+		margin : 3.5em auto;
+		flex-direction : column-reverse;
+	}
+
+	.review__card__bookCoverImage {
+		width : 50%;
+	}
+
 }

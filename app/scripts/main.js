@@ -64,7 +64,7 @@
       name: 'Leaflet Review Data'
   });
 
-  const addEventHandler = function() {
+  const addReadMoreClickEventListener = function() {
     const reviewSection = document.getElementById("reviews");
 
     reviewSection.addEventListener("click", function(e) {
@@ -96,33 +96,36 @@
 
   const render = function(data, whichPage) {
 
-    if (whichPage === 'main') {
+    if (whichPage === 'articlePage') {
+      // Render article page
+      const currentArticleIndex =
+        localforage.getItem('currentArticleIndex').then(function(index) {
+
+        // To-Do : Handle error where current article index isn't found from localforage
+        if (!index) {
+          alert('nothing found here!');
+          return;
+        }
+
+        const articleData = data[index];
+        const templateScript = document.getElementById('article-container').innerHTML;
+        const template = Handlebars.compile(templateScript);
+        document.getElementById('articleContainer').innerHTML = template(articleData);
+      });
+
+    } else {
+      // Render on index page
       return new Promise(function(resolve) {
-        console.log('rendering >>>>>>>>>>');
         console.log('rendering data : ', data);
         const templateScript = document.getElementById('review-cards').innerHTML;
         const template = Handlebars.compile(templateScript);
         document.getElementById('reviews').innerHTML = template(data);
         resolve(data);
       });
-    } else {
-      // article page
-      const currentArticleIndex =
-        localforage.getItem('currentArticleIndex').then(function(index) {
-        const articleData = data[index];
-        console.log('CURRENT INDEX :', index);
-        console.log('articleData :', articleData);
-
-        const templateScript = document.getElementById('article-container').innerHTML;
-        const template = Handlebars.compile(templateScript);
-        document.getElementById('articleContainer').innerHTML = template(articleData);
-        // resolve(data);
-      })
     }
   };
 
   const fetchData = function(type) {
-    console.log('Why Am I Getting Called ?');
     const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
     const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
 
@@ -227,8 +230,7 @@
           if (window.location.pathname === '/article.html') {
             render(values[0], 'articlePage')
          } else {
-
-            addEventHandler();
+            addReadMoreClickEventListener();
             render(values[0], 'main')
               .then(changeBookCoverBackgroundColor);
          }
@@ -242,7 +244,8 @@
 
     const reviewDataPromise = fetchData('reviews').then(processRequest);
     const tagsDataPromise = fetchData('tags').then(processRequest);
-    console.log('DATA Nonexistent in localforage, fetching...');
+
+    console.log('Data not found in localforage, fetching...');
 
     //make fetch requests and save to localForage
     Promise.all([reviewDataPromise, tagsDataPromise])
