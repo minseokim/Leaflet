@@ -264,6 +264,44 @@ a, a:active, a:visited {
 	padding : .8em;
 }
 
+
+
+/* article.html Styles */
+
+.article__container {
+	margin-top: 5em;
+	padding : 1em 8em;
+	line-height: 1.5;
+}
+
+.article__title {
+	font-size : 2rem;
+	font-weight : 800;
+	text-align: center;
+	margin-bottom : .5em;
+}
+
+.article__publishedDate {
+	font-size : 1.2rem;
+	text-align : right;
+	margin-bottom : 1em;
+}
+
+.article__text > p, .article__text blockquote {
+	margin-bottom : 1em;
+}
+
+.article__text > h2, .article__text > h3  {
+	font-weight : 800;
+	font-size : 1.2rem;
+	margin-bottom : .5em;
+}
+
+.article__text strong {
+	font-weight : bold;
+}
+
+
 /* Media Queries for Responsive Views */
 
 @media (max-width : 960px) {

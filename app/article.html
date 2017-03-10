@@ -52,7 +52,7 @@
                 <a class="topnav__sublist__link" href="#">Favorites</a>
               </li>
               <li class="topnav__item">
-                <a class="topnav__sublist__link" href="#">Blog</a>
+                <a class="topnav__sublist__link" href="http://minseoalexkim.com" target="_blank">Blog</a>
               </li>
             </ul>
             <li class="topnav__item">
@@ -63,9 +63,9 @@
 
         <article class="article__container" id="articleContainer">
             <script id="article-container" type="text/x-handlebars-template">
-                <h3>{{this.title}}</h3>
-                <h4>{{this.date}}</h4>
-                {{{this.fullContent}}}
+                <h1 class="article__title">{{this.title}}</h1>
+                <h3 class="article__publishedDate">{{this.date}}</h4>
+                <div class="article__text">{{{this.fullContent}}}</div>
             </script>
         </article>
 
