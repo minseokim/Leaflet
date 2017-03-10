@@ -249,18 +249,36 @@ a, a:active, a:visited {
 }
 
 .sidebar__taglist {
-	padding : 1em 3em;
+	padding : 1em 1em;
 	display : flex;
+	flex-direction: column;
 	flex-wrap : wrap;
+	align-items : center;
 }
 
 .sidebar__tagItem {
 	margin : .3em .3em;
 }
 
+.sidebar__recentlyReviewed {
+	padding : .8em;
+}
 
 /* Media Queries for Responsive Views */
 
+@media (max-width : 960px) {
+	.reviews {
+		width : 80%;
+	}
+
+	.sidebar {
+		width : 20%;
+	}
+
+	.review__card {
+		margin: 3.5em 3em 0em 3em;
+	}
+}
 
 @media (max-width: 800px) {
 
