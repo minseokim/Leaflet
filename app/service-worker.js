@@ -8,11 +8,10 @@ const cacheName = 'v1';
 const cacheFiles = [
   './',
   'https://fonts.googleapis.com/css?family=Nunito',
-  'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.min.js',
   './index.html',
+  './article.html',
   './styles/main.css',
-  './scripts/main.min.js'
+  './scripts/main.min.js',
 ];
 
 self.addEventListener('install', function(e) {

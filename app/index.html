@@ -46,7 +46,7 @@
     <nav class="topnav">
       <ul class="topnav__list">
         <li class="topnav__item">
-          <a class="topnav__link topnav--logo" href="#">Leaflet</a>
+          <a class="topnav__link topnav--logo" href="/index.html">Leaflet</a>
         </li>
         <ul class="topnav__sublist">
           <li class="topnav__item">
@@ -75,9 +75,9 @@
           <article class="review__card">
             <div class="review__card__contentBox">
               <div class="review__card__text">
-                  <h3 class="review__heading" data-articleIndex="{{this.index}}">{{this.title}}</h3>
-                  <div class="review__textContainer" data-articleIndex="{{this.index}}">{{{this.previewText}}}</div>
-                    <a href="" class="readMoreButton">Read More</a>
+                  <h3 class="review__heading">{{this.title}}</h3>
+                  <div class="review__textContainer">{{{this.previewText}}}</div>
+                    <a href="" class="readMoreButton" data-articleindex="{{this.index}}">Read More</a>
                   </div>
               <div class="review__card__footer">
                 <ul class="review__card__taglist">
@@ -115,12 +115,6 @@
       </aside>
     </div>
 
-    <!--Handlebars-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js">
-    </script>
-    <!--Localforage-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.min.js">
-    </script>
     <!-- build:js scripts/main.min.js -->
     <script src="scripts/main.min.js"></script>
     <!-- endbuild -->

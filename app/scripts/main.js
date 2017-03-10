@@ -38,6 +38,7 @@
                 // fresh content will have been added to the cache.
                 // It's the perfect time to display a "New content is
                 // available; please refresh." message in the page's interface.
+                console.log('ServiceWorker Installed Successfully, New Content Available');
                 break;
 
               case 'redundant':
@@ -63,28 +64,61 @@
       name: 'Leaflet Review Data'
   });
 
-  const changeBookCoverBackgroundColor = function(data) {
+  const addEventHandler = function() {
+    const reviewSection = document.getElementById("reviews");
 
-    console.log('changing BG Color >>>>>>>>>>');
-    console.log('data passed from from render()', data);
-    const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
-    const bookCoverElems =
-    document.getElementsByClassName('review__card__bookCover');
-    for (let i = 0; i < bookCoverElems.length; i++) {
-      let colorIndex = i % 4;
-      bookCoverElems[i].style.backgroundColor = colors[colorIndex];
-    }
+    reviewSection.addEventListener("click", function(e) {
+      e.preventDefault();
+      if (e.target.className === "readMoreButton") {
+        console.log(e.target.dataset);
+        localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
+          .then(function(value) {
+            console.log('Go to article index :', value);
+
+            window.location.href="http://localhost:3001/article.html";
+          })
+      }
+    })
   };
 
-  const render = function(data) {
-    return new Promise(function(resolve) {
-      console.log('rendering >>>>>>>>>>');
-      console.log('rendering data : ', data);
-      const templateScript = document.getElementById('review-cards').innerHTML;
-      const template = Handlebars.compile(templateScript);
-      document.getElementById('reviews').innerHTML = template(data);
-      resolve(data);
-    });
+  const changeBookCoverBackgroundColor = function() {
+    return new Promise(function(resolve, reject) {
+      const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
+      const bookCoverElems =
+      document.getElementsByClassName('review__card__bookCover');
+      for (let i = 0; i < bookCoverElems.length; i++) {
+        let colorIndex = i % 4;
+        bookCoverElems[i].style.backgroundColor = colors[colorIndex];
+      }
+      resolve('Update data in the background');
+    })
+  };
+
+  const render = function(data, whichPage) {
+
+    if (whichPage === 'main') {
+      return new Promise(function(resolve) {
+        console.log('rendering >>>>>>>>>>');
+        console.log('rendering data : ', data);
+        const templateScript = document.getElementById('review-cards').innerHTML;
+        const template = Handlebars.compile(templateScript);
+        document.getElementById('reviews').innerHTML = template(data);
+        resolve(data);
+      });
+    } else {
+      // article page
+      const currentArticleIndex =
+        localforage.getItem('currentArticleIndex').then(function(index) {
+        const articleData = data[index];
+        console.log('CURRENT INDEX :', index);
+        console.log('articleData :', articleData);
+
+        const templateScript = document.getElementById('article-container').innerHTML;
+        const template = Handlebars.compile(templateScript);
+        document.getElementById('articleContainer').innerHTML = template(articleData);
+        // resolve(data);
+      })
+    }
   };
 
   const fetchData = function(type) {
@@ -159,6 +193,7 @@
         index: index
       };
     });
+
     return {
       processedData: processedData,
       allTagsList: allTagsList
@@ -175,9 +210,10 @@
     });
 
     return dataObj.processedData;
-  }
+  };
 
   const init = function() {
+
     let reviewDataFromLocal = localforage.getItem('reviewData');
     let tagDataFromLocal = localforage.getItem('tags');
 
@@ -187,10 +223,19 @@
           fetchAllData();
         } else {
           console.log('Successfully fetched data from localforage....');
-          render(values[0])
-            .then(changeBookCoverBackgroundColor);
+
+          if (window.location.pathname === '/article.html') {
+            render(values[0], 'articlePage')
+         } else {
+
+            addEventHandler();
+            render(values[0], 'main')
+              .then(changeBookCoverBackgroundColor);
+         }
         }
-      });
+      }).catch(function(err) {
+        console.error('Error in fetching from localforage :', err);
+      })
   };
 
   const fetchAllData = function() {
