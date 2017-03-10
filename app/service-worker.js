@@ -9,6 +9,7 @@ const cacheFiles = [
   './',
   'https://fonts.googleapis.com/css?family=Nunito',
   'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/localforage/1.5.0/localforage.min.js',
   './index.html',
   './styles/main.css',
   './scripts/main.min.js'
@@ -33,7 +34,7 @@ self.addEventListener('activate', function(e) {
     caches.keys().then(function(cacheNames) {
       return Promise.all(cacheNames.map(function(thisCacheName){
         if (thisCacheName !== cacheName) {
-          console.log('[ServiceWorker] Removing Cached Files from ', thisCacheName);
+          // console.log('[ServiceWorker] Removing Cached Files from ', thisCacheName);
           return caches.delete(thisCacheName);
         }
       }));
@@ -45,8 +46,8 @@ self.addEventListener('fetch', function(e) {
   e.respondWith(
     caches.match(e.request).then(function(response) {
       if (response) {
-        console.log('[ServiceWorker] Found in cache ', e.request.url);
-        console.log('RESPONSE : response', response);
+        // console.log('[ServiceWorker] Found in cache :', e.request.url);
+        // console.log('[ServiceWorker] Response :', response);
         return response;
       }
 
@@ -68,5 +69,5 @@ self.addEventListener('fetch', function(e) {
           console.error('[ServiceWorker] Errored out due to :', err);
         })
     })
-  ); //end of respondWith
+  ); // end of respondWith
 });

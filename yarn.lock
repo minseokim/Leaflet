@@ -2911,6 +2911,10 @@ humanize-url@^1.0.1:
     normalize-url "^1.0.0"
     strip-url-auth "^1.0.0"
 
+idb@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/idb/-/idb-2.0.0.tgz#f5d08517330ed45fc4bf83d4bbe881f30b7c76c4"
+
 imagemin-gifsicle@^4.0.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/imagemin-gifsicle/-/imagemin-gifsicle-4.2.0.tgz#0fef9bbad3476e6b76885736cc5b0b87a08757ca"
