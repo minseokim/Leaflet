@@ -8,9 +8,10 @@ const cacheName = 'v1';
 const cacheFiles = [
   './',
   'https://fonts.googleapis.com/css?family=Nunito',
+  'https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js',
   './index.html',
   './styles/main.css',
-  './scripts/main.js'
+  './scripts/main.min.js'
 ];
 
 self.addEventListener('install', function(e) {
@@ -41,37 +42,31 @@ self.addEventListener('activate', function(e) {
 });
 
 self.addEventListener('fetch', function(e) {
-  // console.log('[ServiceWorker] Fetching', e.request.url);
-  if (e.request.url === 'http://minseoalexkim.com/wp-json/wp/v2/posts' || e.request.url === 'http://minseoalexkim.com/wp-json/wp/v2/tags') {
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      if (response) {
+        console.log('[ServiceWorker] Found in cache ', e.request.url);
+        console.log('RESPONSE : response', response);
+        return response;
+      }
 
-    console.log('[ServiceWorker] Working with MINSEOALEXKIM.COM');
-    e.respondWith(
-      caches.match(e.request).then(function(response) {
-        if (response) {
-          console.log('[ServiceWorker] Found in cache ', e.request.url);
-          console.log('RESPONSE : response', response);
-          return response;
-        }
+      let requestClone = e.request.clone();
 
-        let requestClone = e.request.clone();
+      fetch(requestClone)
+        .then(function(response) {
+          if (!response) {
+            console.log('[ServiceWorker] no response from fetch');
+            return response;
+          }
+          let responseClone = response.clone();
 
-        fetch(requestClone)
-          .then(function(response) {
-            if (!response) {
-              console.log('[ServiceWorker] no response from fetch');
-              return response;
-            }
-            let responseClone = response.clone();
-
-            caches.open(cacheName).then(function(cache) {
-              console.log('[ServiceWorker] CACHING SHIT INTO CACHE!');
-              cache.put(e.request, responseClone);
-              return response;
-            });
-          }).catch(function(err) {
-            console.error('[ServiceWorker] Errored out due to :', err);
-          })
-      })
-    ); //end of respondWith
-  }
+          caches.open(cacheName).then(function(cache) {
+            cache.put(e.request, responseClone);
+            return response;
+          });
+        }).catch(function(err) {
+          console.error('[ServiceWorker] Errored out due to :', err);
+        })
+    })
+  ); //end of respondWith
 });
