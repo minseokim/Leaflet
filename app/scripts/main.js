@@ -157,28 +157,32 @@
 
       // Examine the text in the response
       response.json().then(function(responseText) {
-        resolve(responseText);
+        let response = responseText.query.results.json.json;
+        resolve(response);
       });
     });
   };
 
   /* Processes and filters data into correct format */
   const processData = function(data) {
+    let postData = data[0];
+    let tagData = data[1];
+
     // Filter for book reviews using categories( Category "36")
-    let filteredData = data[0].filter(function(post) {
-      return post.categories[0] === 36;
+    let filteredData = postData.filter(function(post) {
+      return post.categories === '36';
     });
 
     let tagMap = new Map();
     let allTagsList = [];
 
     // create a map that maps tag id(number) with tag name
-    data[1].forEach(function(tag) {
+    tagData.forEach(function(tag) {
       tagMap.set(tag.id, tag.name);
     });
 
     // Map only the relevant properties
-    const processedData = filteredData.map(function(post, index) {
+    const reviewData = filteredData.map(function(post, index) {
       // Since the content of the post is in html format, we split it by newline and only take the first sentence of the post as preview text to show.
       let contentSplitted = post.content.rendered.split('\n');
       let preview = contentSplitted[0];
@@ -209,7 +213,7 @@
     });
 
     return {
-      reviewData: processedData,
+      reviewData: reviewData,
       allTagsList: allTagsList
     };
   };
