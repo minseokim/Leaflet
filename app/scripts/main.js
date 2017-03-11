@@ -65,22 +65,31 @@
   });
 
 
+  const clickHandler = function(e) {
+      // prevent anchor tag from submitting and reloading page
+      e.preventDefault();
+
+      if (e.target.className === "readMoreButton") {
+
+        if (!window.fetch) {
+          console.log('saving article index to localStorage');
+          window.localStorage.setItem('currentArticleIndex', e.target.dataset.articleindex);
+          window.location.href = e.target.href;
+        } else {
+        // get current article from data attribute, store it in localforage then redirect to article page
+          localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
+            .then(function(value) {
+              // redirect back to article page
+              window.location.href= e.target.href;
+            });
+        }
+      }
+  };
+
   /* Attach event listeners to 'Read More' button on each article card */
   const addReadMoreClickEventListener = function() {
     const reviewSection = document.getElementById("reviews");
-
-    reviewSection.addEventListener("click", function(e) {
-      // prevent anchor tag from submitting and reloading page
-      e.preventDefault();
-      if (e.target.className === "readMoreButton") {
-        // get current article from data attribute, store it in localforage then redirect to article page
-        localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
-          .then(function(value) {
-            // redirect back to article page
-            window.location.href= e.target.href;
-          });
-      }
-    });
+    reviewSection.addEventListener("click", clickHandler);
   };
 
   /* Change background image of book cover image */
@@ -100,23 +109,36 @@
   /* Renders content into article page and index page using Handlebars */
   const render = function(data, whichPage) {
 
-    if (whichPage === 'articlePage') {
-      // Render article page
-      const currentArticleIndex =
-        localforage.getItem('currentArticleIndex').then(function(index) {
+    if (window.location.pathname === '/article.html') {
+      let currentArticleIndex;
 
-        // If article index isn't found in localforage, redirect back to index.html
-        if (!index) {
-          console.error('Article index not found in localforage');
-          window.location.href=window.location.origin;
-          return;
-        }
+      // get article index from localStorage
+      if (!window.fetch) {
+        currentArticleIndex = window.localStorage.getItem("currentArticleIndex");
 
-        const articleData = data[index];
+        console.log('RENDERING ARTICLE PAGE');
+        console.log('currentArticleIndex = :', currentArticleIndex);
+        const articleData = data[currentArticleIndex];
         const templateScript = document.getElementById('article-container').innerHTML;
         const template = Handlebars.compile(templateScript);
         document.getElementById('articleContainer').innerHTML = template(articleData);
-      });
+      } else {
+          // Render article page from localforage
+          currentArticleIndex =
+            localforage.getItem('currentArticleIndex').then(function(index) {
+
+            // If article index isn't found in localforage, redirect back to index.html
+            if (!index) {
+              console.error('Article index not found in localforage');
+              window.location.href=window.location.origin;
+              return;
+            }
+          const articleData = data[index];
+          const templateScript = document.getElementById('article-container').innerHTML;
+          const template = Handlebars.compile(templateScript);
+          document.getElementById('articleContainer').innerHTML = template(articleData);
+          });
+        }
 
     } else {
       // Render index page
@@ -130,19 +152,64 @@
     }
   };
 
+  const getAjax = function(url) {
+  // Return a new promise.
+  return new Promise(function(resolve, reject) {
+    // Do the usual XHR stuff
+    var req = new XMLHttpRequest();
+    req.open('GET', url);
+
+    req.onload = function() {
+      // This is called even on 404 etc
+      // so check the status
+      if (req.status == 200) {
+        // Resolve the promise with the response text
+        resolve(req.response);
+      }
+      else {
+        // Otherwise reject with the status text
+        // which will hopefully be a meaningful error
+        reject(Error(req.statusText));
+      }
+    };
+
+    // Handle network errors
+    req.onerror = function() {
+      reject(Error("Network Error"));
+    };
+
+    // Make the request
+    req.send();
+  });
+}
+
   /* Returns fetch API to get data from WordPress */
   const fetchData = function(type) {
-
     // type is either 'posts' or 'tags' and we generate requestUrl according to whichever one is passed
     const requestUrl = `https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2F${type}%22&format=json&diagnostics=true&callback=`;
 
-    // Add 'cors' as mode since we're making a Cross-Origins Request
-    return fetch(requestUrl, {mode: 'cors'});
+    if (window.fetch) {
+      console.log('fetch detected!');
+      // Add 'cors' as mode since we're making a Cross-Origins Request
+      return fetch(requestUrl, {mode: 'cors'});
+    } else {
+      console.log('going ajax!');
+      return getAjax(requestUrl);
+    }
+  };
+
+  /**/
+  const processAjaxRequest = function(response) {
+    return new Promise(function(resolve, reject) {
+      let result = JSON.parse(response).query.results.json.json;
+      //add false flag to call processData with flag
+      resolve(result);
+    });
   };
 
   /* Examines request to make sure we got back valid response */
   const processRequest = function(response) {
-    return new Promise(function(resolve) {
+    return new Promise(function(resolve, reject) {
       if (response.type === 'opaque') {
         console.log('Received a response, but it\'s opaque so can\'t examine it');
         // Do something with the response (i.e. cache it for offline support)
@@ -158,6 +225,7 @@
       // Examine the text in the response
       response.json().then(function(responseText) {
         let response = responseText.query.results.json.json;
+        console.log(response);
         resolve(response);
       });
     });
@@ -212,6 +280,10 @@
       };
     });
 
+    if (!window.fetch) {
+      return reviewData;
+    }
+
     return {
       reviewData: reviewData,
       allTagsList: allTagsList
@@ -231,22 +303,40 @@
     return dataObj.reviewData;
   };
 
-  const fetchAllData = function() {
+  const fetchAllData = function(flag) {
 
-    const reviewDataPromise = fetchData('posts').then(processRequest);
-    const tagsDataPromise = fetchData('tags').then(processRequest);
+    let reviewDataPromise;
+    let tagsDataPromise;
 
-    console.log('Data not found in localforage, fetching...');
-
-    //make fetch requests and save to localForage
-    Promise.all([reviewDataPromise, tagsDataPromise])
+    if (flag === false) {
+      // Case where localforage/indexDB is NOT supported.
+      reviewDataPromise = fetchData('posts').then(processAjaxRequest);
+      tagsDataPromise = fetchData('tags').then(processAjaxRequest);
+      console.log('im fetchAllData am i getting called? Entered false flag');
+      //make fetch requests and save to localForage
+      Promise.all([reviewDataPromise, tagsDataPromise])
       .then(processData)
-      .then(saveToLocalForage)
       .then(render)
       .then(changeBookCoverBackgroundColor)
       .catch(function(err) {
         console.error('Fetching data from WordPress failed because of :', err);
       });
+    } else {
+
+      reviewDataPromise = fetchData('posts').then(processRequest);
+      tagsDataPromise = fetchData('tags').then(processRequest);
+      console.log('Data not found in localforage, fetching...');
+
+      //make fetch requests and save to localForage
+      Promise.all([reviewDataPromise, tagsDataPromise])
+        .then(processData)
+        .then(saveToLocalForage)
+        .then(render)
+        .then(changeBookCoverBackgroundColor)
+        .catch(function(err) {
+          console.error('Fetching data from WordPress failed because of :', err);
+        });
+    }
   };
 
   const init = function() {
@@ -261,10 +351,8 @@
     Promise.all([reviewDataFromLocal, tagDataFromLocal])
       .then(function(values) {
         if (values[0] === null || values[1] === null) {
-          fetchAllData();
+          fetchAllData(true);
         } else {
-          console.log('Successfully fetched data from localforage....');
-
           if (window.location.pathname === '/article.html') {
             render(values[0], 'articlePage');
          } else {
@@ -273,8 +361,9 @@
          }
         }
       }).catch(function(err) {
+        fetchAllData(false);
         console.error('Error in fetching from localforage :', err);
-      })
+      });
   };
 
   //Start app
