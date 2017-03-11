@@ -223,8 +223,13 @@ a, a:active, a:visited {
 	background-color : #ffffff;
 	display : flex;
 	flex-direction : column;
-	justify-content: space-around;
+	justify-content: flex-start;
+	padding-top: 4em;
 	z-index : -1;
+}
+
+.sidebar__tags {
+	margin-bottom: 1.5em;
 }
 
 .sidebar__heading__tags, .sidebar__heading__recentlyReviewed {
@@ -293,12 +298,32 @@ a, a:active, a:visited {
 
 .article__text > h2, .article__text > h3  {
 	font-weight : 800;
-	font-size : 1.2rem;
+	font-size : 1.5rem;
 	margin-bottom : .5em;
 }
 
 .article__text strong {
 	font-weight : bold;
+}
+
+.article__text blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 1em;
+  padding: 0.5em 1em;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+.article__text blockquote:before {
+  color: #ccc;
+  content: "";
+  font-size: 4em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+}
+
+.article__text blockquote p {
+  display: inline;
 }
 
 
@@ -319,6 +344,11 @@ a, a:active, a:visited {
 }
 
 @media (max-width: 800px) {
+
+	.article__container {
+		padding : 2em 8em;
+		line-height : 1.6;
+	}
 
 	.reviews {
 		width: 100%;
@@ -368,6 +398,10 @@ a, a:active, a:visited {
 
 /* Two-column layout */
 @media (max-width : 650px) {
+	.article__container {
+		padding : 2em 6em;
+	}
+
 
 	.sidebar {
 		display : none;
@@ -411,6 +445,9 @@ a, a:active, a:visited {
 
 /* Single Column layout 401 ~ 500px */
 @media (max-width : 500px) {
+	.article__container {
+		padding : 2em 4em;
+	}
 
 	.review__card {
 		margin : 3.5em auto;
@@ -437,6 +474,10 @@ a, a:active, a:visited {
 
 /* One-column layout for smallest viewport */
 @media (max-width : 400px) {
+
+	.article__container {
+		padding : 2em 3em;
+	}
 
 	.review__card {
 		margin : 3.5em auto;

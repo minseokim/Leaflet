@@ -186,8 +186,11 @@
         }
       }
 
+      //slice out time, keep only year-month-day
+      let formattedDate = post.date.slice(0,10);
+
       return {
-        date: post.date,
+        date: formattedDate,
         title: post.title.rendered,
         previewText: preview,
         fullContent: post.content.rendered,
