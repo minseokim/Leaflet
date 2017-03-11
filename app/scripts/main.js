@@ -132,10 +132,10 @@
 
   /* Returns fetch API to get data from WordPress */
   const fetchData = function(type) {
-    const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
-    const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
 
-    let requestUrl = type === 'reviews' ? postRequestUrl : tagsRequestUrl;
+    // type is either 'posts' or 'tags' and we generate requestUrl according to whichever one is passed
+    const requestUrl = `https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%20%3D%22http%3A%2F%2Fwww.minseoalexkim.com%2Fwp-json%2Fwp%2Fv2%2F${type}%22&format=json&diagnostics=true&callback=`;
+
     // Add 'cors' as mode since we're making a Cross-Origins Request
     return fetch(requestUrl, {mode: 'cors'});
   };
@@ -229,7 +229,7 @@
 
   const fetchAllData = function() {
 
-    const reviewDataPromise = fetchData('reviews').then(processRequest);
+    const reviewDataPromise = fetchData('posts').then(processRequest);
     const tagsDataPromise = fetchData('tags').then(processRequest);
 
     console.log('Data not found in localforage, fetching...');
