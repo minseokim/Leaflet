@@ -275,7 +275,7 @@ a, a:active, a:visited {
 
 .article__container {
 	margin-top: 5em;
-	padding : 1em 8em;
+	padding : 2em 14em;
 	line-height: 1.5;
 }
 
@@ -330,6 +330,12 @@ a, a:active, a:visited {
 /* Media Queries for Responsive Views */
 
 @media (max-width : 960px) {
+
+	.article__container {
+		padding : 2em 10em;
+		line-height : 1.6;
+	}
+
 	.reviews {
 		width : 80%;
 	}
@@ -486,6 +492,10 @@ a, a:active, a:visited {
 
 	.review__card__bookCoverImage {
 		width : 50%;
+	}
+
+	.topnav__sublist {
+		display : none;
 	}
 
 }

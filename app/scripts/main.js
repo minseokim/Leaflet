@@ -56,31 +56,34 @@
     });
   }
 
-  // App Logic Goes Here
+  /* App Logic Goes Here */
 
-  /* Configure Localforage to store data from WordPress API */
+  // Configure Localforage to store data from WordPress API
   localforage.config({
       driver: localforage.INDEXEDDB,
       name: 'Leaflet Review Data'
   });
 
+
+  /* Attach event listeners to 'Read More' button on each article card */
   const addReadMoreClickEventListener = function() {
     const reviewSection = document.getElementById("reviews");
 
     reviewSection.addEventListener("click", function(e) {
+      // prevent anchor tag from submitting and reloading page
       e.preventDefault();
       if (e.target.className === "readMoreButton") {
-        console.log(e.target.dataset);
+        // get current article from data attribute, store it in localforage then redirect to article page
         localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
           .then(function(value) {
-            console.log('Go to article index :', value);
-
-            window.location.href="http://localhost:3001/article.html";
-          })
+            // redirect back to article page
+            window.location.href= e.target.href;
+          });
       }
-    })
+    });
   };
 
+  /* Change background image of book cover image */
   const changeBookCoverBackgroundColor = function() {
     return new Promise(function(resolve, reject) {
       const colors = ['#F36A6F', '#65A3F6', '#9FF6B7', '#FECC48'];
@@ -94,6 +97,7 @@
     })
   };
 
+  /* Renders content into article page and index page using Handlebars */
   const render = function(data, whichPage) {
 
     if (whichPage === 'articlePage') {
@@ -101,9 +105,10 @@
       const currentArticleIndex =
         localforage.getItem('currentArticleIndex').then(function(index) {
 
-        // To-Do : Handle error where current article index isn't found from localforage
+        // If article index isn't found in localforage, redirect back to index.html
         if (!index) {
-          alert('nothing found here!');
+          console.error('Article index not found in localforage');
+          window.location.href=window.location.origin;
           return;
         }
 
@@ -114,7 +119,7 @@
       });
 
     } else {
-      // Render on index page
+      // Render index page
       return new Promise(function(resolve) {
         console.log('rendering data : ', data);
         const templateScript = document.getElementById('review-cards').innerHTML;
@@ -125,6 +130,7 @@
     }
   };
 
+  /* Returns fetch API to get data from WordPress */
   const fetchData = function(type) {
     const postRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/posts';
     const tagsRequestUrl = 'http://minseoalexkim.com/wp-json/wp/v2/tags';
@@ -134,6 +140,7 @@
     return fetch(requestUrl, {mode: 'cors'});
   };
 
+  /* Examines request to make sure we got back valid response */
   const processRequest = function(response) {
     return new Promise(function(resolve) {
       if (response.type === 'opaque') {
@@ -155,6 +162,7 @@
     });
   };
 
+  /* Processes and filters data into correct format */
   const processData = function(data) {
     // Filter for book reviews using categories( Category "36")
     let filteredData = data[0].filter(function(post) {
@@ -201,46 +209,22 @@
     });
 
     return {
-      processedData: processedData,
+      reviewData: processedData,
       allTagsList: allTagsList
     };
   };
 
+  /* Saves data to localForage */
   const saveToLocalForage = function(dataObj) {
     // store review data('processedData') and list of all tags('allTagsList') in localforage
-    localforage.setItem('reviewData', dataObj.processedData).then((value) => {
+    localforage.setItem('reviewData', dataObj.reviewData).then((value) => {
       console.log('*****reviewData IN LOCALFORAGE', value);
     });
     localforage.setItem('tags', dataObj.allTagsList).then((value) => {
       console.log('*****allTagsList IN LOCALFORAGE', value);
     });
 
-    return dataObj.processedData;
-  };
-
-  const init = function() {
-
-    let reviewDataFromLocal = localforage.getItem('reviewData');
-    let tagDataFromLocal = localforage.getItem('tags');
-
-    Promise.all([reviewDataFromLocal, tagDataFromLocal])
-      .then(function(values) {
-        if (values[0] === null || values[1] === null) {
-          fetchAllData();
-        } else {
-          console.log('Successfully fetched data from localforage....');
-
-          if (window.location.pathname === '/article.html') {
-            render(values[0], 'articlePage')
-         } else {
-            addReadMoreClickEventListener();
-            render(values[0], 'main')
-              .then(changeBookCoverBackgroundColor);
-         }
-        }
-      }).catch(function(err) {
-        console.error('Error in fetching from localforage :', err);
-      })
+    return dataObj.reviewData;
   };
 
   const fetchAllData = function() {
@@ -261,6 +245,35 @@
       });
   };
 
+  const init = function() {
+
+    let reviewDataFromLocal = localforage.getItem('reviewData');
+    let tagDataFromLocal = localforage.getItem('tags');
+
+    if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+      addReadMoreClickEventListener();
+    }
+
+    Promise.all([reviewDataFromLocal, tagDataFromLocal])
+      .then(function(values) {
+        if (values[0] === null || values[1] === null) {
+          fetchAllData();
+        } else {
+          console.log('Successfully fetched data from localforage....');
+
+          if (window.location.pathname === '/article.html') {
+            render(values[0], 'articlePage');
+         } else {
+            render(values[0], 'main')
+              .then(changeBookCoverBackgroundColor);
+         }
+        }
+      }).catch(function(err) {
+        console.error('Error in fetching from localforage :', err);
+      })
+  };
+
+  //Start app
   init();
 
 })();
