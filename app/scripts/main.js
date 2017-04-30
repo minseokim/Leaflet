@@ -56,41 +56,12 @@
     });
   }
 
-  /* App Logic Goes Here */
 
   // Configure Localforage to store data from WordPress API
   localforage.config({
       driver: localforage.INDEXEDDB,
       name: 'Leaflet Review Data'
   });
-
-
-  const clickHandler = function(e) {
-      // prevent anchor tag from submitting and reloading page
-      e.preventDefault();
-
-      if (e.target.className === "readMoreButton") {
-
-        if (!window.fetch) {
-          console.log('saving article index to localStorage');
-          window.localStorage.setItem('currentArticleIndex', e.target.dataset.articleindex);
-          window.location.href = e.target.href;
-        } else {
-        // get current article from data attribute, store it in localforage then redirect to article page
-          localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
-            .then(function(value) {
-              // redirect back to article page
-              window.location.href= e.target.href;
-            });
-        }
-      }
-  };
-
-  /* Attach event listeners to 'Read More' button on each article card */
-  const addReadMoreClickEventListener = function() {
-    const reviewSection = document.getElementById("reviews");
-    reviewSection.addEventListener("click", clickHandler);
-  };
 
   /* Change background image of book cover image */
   const changeBookCoverBackgroundColor = function() {
@@ -115,9 +86,6 @@
       // get article index from localStorage
       if (!window.fetch) {
         currentArticleIndex = window.localStorage.getItem("currentArticleIndex");
-
-        console.log('RENDERING ARTICLE PAGE');
-        console.log('currentArticleIndex = :', currentArticleIndex);
         const articleData = data[currentArticleIndex];
         const templateScript = document.getElementById('article-container').innerHTML;
         const template = Handlebars.compile(templateScript);
@@ -143,7 +111,6 @@
     } else {
       // Render index page
       return new Promise(function(resolve) {
-        console.log('rendering data : ', data);
         const templateScript = document.getElementById('review-cards').innerHTML;
         const template = Handlebars.compile(templateScript);
         document.getElementById('reviews').innerHTML = template(data);
@@ -152,6 +119,7 @@
     }
   };
 
+  /* When fetch isn't supported, make raw vanilla JS ajax request */
   const getAjax = function(url) {
   // Return a new promise.
   return new Promise(function(resolve, reject) {
@@ -198,7 +166,7 @@
     }
   };
 
-  /**/
+  /* Returns a new Promise after making an Ajax request */
   const processAjaxRequest = function(response) {
     return new Promise(function(resolve, reject) {
       let result = JSON.parse(response).query.results.json.json;
@@ -207,7 +175,7 @@
     });
   };
 
-  /* Examines request to make sure we got back valid response */
+  /* Examines request after it's returned to make sure we got back valid response */
   const processRequest = function(response) {
     return new Promise(function(resolve, reject) {
       if (response.type === 'opaque') {
@@ -309,10 +277,9 @@
     let tagsDataPromise;
 
     if (flag === false) {
-      // Case where localforage/indexDB is NOT supported.
+      // Case where localforage/indexDB is NOT supported. Mobile/Safari/Mozilla
       reviewDataPromise = fetchData('posts').then(processAjaxRequest);
       tagsDataPromise = fetchData('tags').then(processAjaxRequest);
-      console.log('im fetchAllData am i getting called? Entered false flag');
       //make fetch requests and save to localForage
       Promise.all([reviewDataPromise, tagsDataPromise])
       .then(processData)
@@ -325,7 +292,6 @@
 
       reviewDataPromise = fetchData('posts').then(processRequest);
       tagsDataPromise = fetchData('tags').then(processRequest);
-      console.log('Data not found in localforage, fetching...');
 
       //make fetch requests and save to localForage
       Promise.all([reviewDataPromise, tagsDataPromise])
@@ -338,6 +304,35 @@
         });
     }
   };
+
+
+  /* Attach event listeners to 'Read More' button on each article card */
+  const addReadMoreClickEventListener = function() {
+    const reviewSection = document.getElementById("reviews");
+    reviewSection.addEventListener("click", clickHandler);
+  };
+
+  const clickHandler = function(e) {
+      // prevent anchor tag from submitting and reloading page
+      e.preventDefault();
+
+      if (e.target.className === "readMoreButton") {
+
+        if (!window.fetch) {
+          console.log('saving article index to localStorage');
+          window.localStorage.setItem('currentArticleIndex', e.target.dataset.articleindex);
+          window.location.href = e.target.href;
+        } else {
+        // get current article from data attribute, store it in localforage then redirect to article page
+          localforage.setItem('currentArticleIndex', e.target.dataset.articleindex)
+            .then(function(value) {
+              // redirect back to article page
+              window.location.href = e.target.href;
+            });
+        }
+      }
+  };
+
 
   const init = function() {
 
